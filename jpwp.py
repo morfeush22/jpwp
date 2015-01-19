@@ -4,6 +4,7 @@
 
 import urllib2
 import re
+import unicodedata
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
 
@@ -59,7 +60,8 @@ class ParseQuery(object):
 
 			divId = {"id": re.compile("mw-content-text")}
 			content = soup.find(attrs = divId)
-			outputText = re.sub("\s+", " ", content.text).strip()
+			outputText = unicodedata.normalize("NKFD", re.sub("\s+", " ", content.text).strip()) \
+				.encode("ascii", "ignore")
 
 			postName = {"name": country}
 			postId = names.insert(postName)
@@ -70,9 +72,10 @@ class ParseQuery(object):
 			return outputText
 
 	def __getCountryTag(self, country, tag):
-		outputText = getCountry(country)
-		# + tag
-		pass
+		outputText = self.__getCountry(country)
+		sentencesList = outputText.split(".")
+
+		return ". ".join([sentence for sentence in sentencesList if sentence.find(tag) != -1]) + "."
 
 	def __getCountryFlag(self, country):
 		pass
@@ -103,9 +106,6 @@ if __name__ == "__main__":
 	while True:
 		print "Go on"
 		queryParser(re.sub(r"\s+", "", raw_input().lower()))
-
-	print client
-	print db
 
 	"""
 	file_ = open('text.txt', 'w')
