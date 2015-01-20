@@ -5,6 +5,7 @@ from parsers import CountryParser, CountryTagParser, CountryJsonParser, CountryG
 from pymongo import MongoClient
 
 import re
+import sys
 
 class ParseQuery(object):
 	def __init__(self, db):
@@ -25,6 +26,9 @@ class ParseQuery(object):
 			_result = _parser(query)
 			if _result != False:
 				return _result
+		
+		if query == "exit":
+			sys.exit()
 
 		raise ValueError("Wrong query!")
 
@@ -34,5 +38,4 @@ if __name__ == "__main__":
 	_queryParser = ParseQuery(_db)
 
 	while True:
-		print "Enter query:"
-		print _queryParser(re.sub(r"\s+", "", raw_input().lower()))
+		print _queryParser(re.sub(r"\s+", "", raw_input("--> ").lower()))
