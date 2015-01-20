@@ -5,3 +5,5 @@ class CountryGetFlagParser(Parser):
 	def __init__(self):
 		super(CountryGetFlagParser, self).__init__(r"^country\(([a-zA-Z]*)\);?getflag$")
 		
+	def __call__(self):
+		pass

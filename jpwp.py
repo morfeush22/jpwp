@@ -34,5 +34,5 @@ if __name__ == "__main__":
 	_queryParser = ParseQuery(_db)
 
 	while True:
-		print "Go on"
+		print "Enter query:"
 		print _queryParser(re.sub(r"\s+", "", raw_input().lower()))
