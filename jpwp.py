@@ -14,8 +14,9 @@ class ParseQuery(object):
 		self.countryTagQueryRe = re.compile(r"^country\(([a-zA-Z]*)\);?tag\(([0-9a-zA-Z_.,:]*)\)$")
 		self.countryGetFlagQueryRe = re.compile(r"^country\(([a-zA-Z]*)\);?getflag$")
 		self.countryCheckFlagRe = re.compile(r"^checkflag\((http://[0-9a-zA-Z_.]*[gif|jpeg])\)$")
-		self.countryJson = re.compile(r"^([0-9a-zA-Z_]*)={([0-9a-zA-Z_,:]+)}$")
+		self.countryJson = re.compile(r"^([0-9a-zA-Z_]*)={([0-9a-zA-Z_,:;\(\)]+)}$")
 
+		self.variablesList = {}
 		self.db = db
 
 	def __call__(self, query):
@@ -23,12 +24,12 @@ class ParseQuery(object):
 		if wrapper(self.countryQueryRe.match(query)):
 			# get country info from wiki
 			country = wrapper.match.group(1)
-			print self.__getCountry(country)	
+			return self.__getCountry(country)	
 		elif wrapper(self.countryTagQueryRe.match(query)):
 			# get country info from wiki and get sentences with tags
 			country = wrapper.match.group(1)
 			tag = wrapper.match.group(2)
-			print self.__getCountryTag(country, tag)
+			return self.__getCountryTag(country, tag)
 		elif wrapper(self.countryGetFlagQueryRe.match(query)):
 			# return flag
 			country = wrapper.match.group(1)
@@ -41,7 +42,7 @@ class ParseQuery(object):
 			# json query
 			variable = wrapper.match.group(1)
 			query = wrapper.match.group(2)
-			self.__handleJsonQuery(variable, query)
+			return self.__handleJsonQuery(variable, query)
 		else:
 			# how to query
 			print "???"
@@ -84,7 +85,31 @@ class ParseQuery(object):
 		pass
 
 	def __handleJsonQuery(self, variable, query):
-		pass
+		# print item, value for query.split(",")
+		# data={address:adr,port:prt,type:tp,content:country(poland);tag(marriage)}
+		address_ = port_ = type_ = content_ = None
+
+		self.variablesList[variable] = dict(item.split(":") for item in query.split(","))
+		for key, value in self.variablesList[variable].iteritems():
+			if key == "address":
+				address_ = value
+			elif key == "port":
+				port_ = value
+			elif key == "type":
+				type_ = value
+			elif key == "content":
+				content_ = value
+			else:
+				# throw
+				return
+
+		if (address_ and port_ and type_ and content_) is None:
+			# throw
+			return
+
+		data = self.__call__(content_)
+			
+		return self.variablesList[variable]
 
 class MatchWrapper(object):
 	def __init__(self):
@@ -105,7 +130,7 @@ if __name__ == "__main__":
 
 	while True:
 		print "Go on"
-		queryParser(re.sub(r"\s+", "", raw_input().lower()))
+		print queryParser(re.sub(r"\s+", "", raw_input().lower()))
 
 	"""
 	file_ = open('text.txt', 'w')
