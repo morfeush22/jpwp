@@ -7,6 +7,12 @@ class Parser(object):
 		self.regex = re.compile(regex)
 		self.wrapper = MatchWrapper()
 
+	def match(self, query):
+		if self.regex.match(query):
+			return True
+		else:
+			return False
+
 class MatchWrapper(object):
 	def __init__(self):
 		super(MatchWrapper, self).__init__()

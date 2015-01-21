@@ -17,27 +17,27 @@ class CountryParser(Parser):
 			return False
 
 	def __parse(self, country):
-		_contents = self.db.contents
-		_names = self.db.names
+		contents = self.db.contents
+		names = self.db.names
 
-		_getItem = _names.find({"name": country})
+		getItem = names.find({"name": country})
 
-		if _getItem.count():
-			return _contents.find({"name_id": _getItem[0]["_id"]})[0]["content"]
+		if getItem.count():
+			return contents.find({"name_id": getItem[0]["_id"]})[0]["content"]
 		else:
-			_url = "http://en.wikipedia.org/wiki/" + country
-			_rawHtml = urllib2.urlopen(_url)
-			_soup = BeautifulSoup(_rawHtml)
+			url = "http://en.wikipedia.org/wiki/" + country
+			rawHtml = urllib2.urlopen(url)
+			soup = BeautifulSoup(rawHtml)
 
-			_divId = {"id": re.compile("mw-content-text")}
-			_content = _soup.find(attrs = _divId)
-			_outputText = unicodedata.normalize("NKFD", re.sub("\s+", " ", _content.text).strip()) \
+			divId = {"id": re.compile("mw-content-text")}
+			content = soup.find(attrs = divId)
+			outputText = unicodedata.normalize("NKFD", re.sub("\s+", " ", content.text).strip()) \
 				.encode("ascii", "ignore")
 
-			_postName = {"name": country}
-			_postId = _names.insert(_postName)
+			postName = {"name": country}
+			postId = names.insert(postName)
 			
-			_postContent = {"name_id": _postId, "content": _outputText}
-			_contents.insert(_postContent)
+			postContent = {"name_id": postId, "content": outputText}
+			contents.insert(postContent)
 
-			return _outputText
+			return outputText

@@ -13,8 +13,8 @@ class CountryTagParser(Parser):
 			return False
 
 	def __parse(self, country, tag):
-		_outputText = self.callback(country)
-		_sentencesList = _outputText.split(".")
+		outputText = self.callback(country)
+		sentencesList = outputText.split(".")
 
-		return ". ".join([sentence for sentence in _sentencesList if sentence.find(tag) != -1]) + "."
+		return ". ".join([sentence for sentence in sentencesList if sentence.find(tag) != -1]) + "."
 		
