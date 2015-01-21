@@ -3,12 +3,12 @@ from Parser import Parser
 
 class CountryTagParser(Parser):
 	def __init__(self, callback):
-		super(CountryTagParser, self).__init__(r"^(country\([a-zA-Z]*\));?tag\(([0-9a-zA-Z_.,:]*)\)$")
+		super(CountryTagParser, self).__init__(r"^(country\([a-zA-Z\s]*\));\s*tag\(([0-9a-zA-Z_.,:\s]*)\)$")
 		self.callback = callback
 
 	def __call__(self, query):
 		if self.wrapper(self.regex.match(query)):
-			return self.__parse(self.wrapper.match.group(1), self.wrapper.match.group(2))
+			return self.__parse(self.wrapper.match.group(1), self.replaceTabs(" ", self.wrapper.match.group(2)))
 		else:
 			return False
 
@@ -16,5 +16,5 @@ class CountryTagParser(Parser):
 		outputText = self.callback(country)
 		sentencesList = outputText.split(".")
 
-		return ". ".join([sentence for sentence in sentencesList if sentence.find(tag) != -1]) + "."
+		return ". ".join([sentence for sentence in sentencesList if sentence.lower().find(tag) != -1]) + "."
 		

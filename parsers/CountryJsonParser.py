@@ -6,7 +6,7 @@ import requests
 
 class CountryJsonParser(Parser):
 	def __init__(self):
-		super(CountryJsonParser, self).__init__(r"^([0-9a-zA-Z_]*)={([0-9a-zA-Z_.,:;\(\)]+)}$")
+		super(CountryJsonParser, self).__init__(r"^([0-9a-zA-Z_]*)\s*=\s*{([0-9a-zA-Z_.,:;\(\)\s]+)}$")
 		self.variablesList = {}
 
 	def __call__(self, query):
@@ -20,7 +20,8 @@ class CountryJsonParser(Parser):
 	def __parse(self, variable, query):
 		address = port = queryType = content = None
 
-		splitted = dict(item.split(":") for item in query.split(","))
+		iterator = iter(element.strip() for item in query.split(",") for element in item.strip().split(":"))
+		splitted = dict(zip(iterator, iterator))
 
 		for key, value in splitted.iteritems():
 			if key == "address":

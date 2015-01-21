@@ -2,17 +2,18 @@
 from bs4 import BeautifulSoup
 from Parser import Parser
 
+import re
 import urllib2
 import unicodedata
 
 class CountryParser(Parser):
 	def __init__(self, db):
-		super(CountryParser, self).__init__(r"^country\(([a-zA-Z]*)\)$")
+		super(CountryParser, self).__init__(r"^country\(([a-zA-Z\s]*)\)$")
 		self.db = db
 
 	def __call__(self, query):
 		if self.wrapper(self.regex.match(query)):
-			return self.__parse(self.wrapper.match.group(1))
+			return self.__parse(self.replaceTabs("_", self.wrapper.match.group(1)))
 		else:
 			return False
 
@@ -31,7 +32,7 @@ class CountryParser(Parser):
 
 			divId = {"id": re.compile("mw-content-text")}
 			content = soup.find(attrs = divId)
-			outputText = unicodedata.normalize("NKFD", re.sub("\s+", " ", content.text).strip()) \
+			outputText = unicodedata.normalize("NFD", re.sub("\s+", " ", content.text).strip()) \
 				.encode("ascii", "ignore")
 
 			postName = {"name": country}

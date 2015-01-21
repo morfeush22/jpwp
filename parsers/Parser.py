@@ -13,6 +13,9 @@ class Parser(object):
 		else:
 			return False
 
+	def replaceTabs(self, character, string):
+		return re.sub("\s+", character, string)
+
 class MatchWrapper(object):
 	def __init__(self):
 		super(MatchWrapper, self).__init__()
