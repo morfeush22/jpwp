@@ -37,7 +37,7 @@ class ParseQuery(object):
 		raise ValueError("Wrong query!")
 
 	def parseHttpRequest(self, queryType, query):
-		for parser in self.dataParsers + self.mediaParsers:
+		for parser in self.parsers:
 			match = parser.match(query)
 			if match:
 				if queryType == "media" and parser in self.mediaParsers:
