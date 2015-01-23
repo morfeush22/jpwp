@@ -3,6 +3,7 @@ from parsers import CountryParser, CountryTagParser, CountryJsonParser, CountryG
 from PIL import Image
 from MakeRequest import MakeRequest
 
+import base64
 import io
 import sys
 
@@ -41,7 +42,9 @@ class ParseQuery(object):
 					else:
 						response = self.requestMaker(result)
 						if response[1] == "media":
-							# parse image				
+							decoded = base64.b64decode(response[0])
+							image = Image.open(io.BytesIO(decoded))
+							image.show()
 							return True
 						elif response[1] == "data":
 							print response[0]
@@ -60,7 +63,7 @@ class ParseQuery(object):
 			if match:
 				if queryType == "media" and parser in self.mediaParsers:
 					if parser is self.countryGetFlagParser:
-						return {"response": "Media!", "type": "media"}
+						return {"response": base64.b64encode(parser(query)), "type": "media"}
 					else:
 						return {"response": parser(query), "type": "data"}
 				elif queryType == "data" and parser in self.dataParsers:
