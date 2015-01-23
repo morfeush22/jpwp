@@ -13,7 +13,7 @@ class CountryParser(Parser):
 
 	def __call__(self, query):
 		if self.wrapper(self.regex.match(query)):
-			return self.__parse(self.replaceTabs("_", self.wrapper.match.group(1)))
+			return self.__parse(self.replaceTabs("_", self.wrapper.match.group(1).strip()))
 		else:
 			return False
 

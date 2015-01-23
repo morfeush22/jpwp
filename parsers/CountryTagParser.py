@@ -8,7 +8,7 @@ class CountryTagParser(Parser):
 
 	def __call__(self, query):
 		if self.wrapper(self.regex.match(query)):
-			return self.__parse(self.wrapper.match.group(1), self.replaceTabs(" ", self.wrapper.match.group(2)))
+			return self.__parse(self.wrapper.match.group(1), self.replaceTabs(" ", self.wrapper.match.group(2).strip()))
 		else:
 			return False
 

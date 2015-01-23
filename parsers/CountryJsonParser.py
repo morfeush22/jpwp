@@ -2,7 +2,6 @@
 from Parser import Parser
 
 import re
-import requests
 
 class CountryJsonParser(Parser):
 	def __init__(self):

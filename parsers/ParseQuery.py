@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from parsers import CountryParser, CountryTagParser, CountryJsonParser, CountryGetFlagParser, CountryCheckFlagParser
+from PIL import Image
 from MakeRequest import MakeRequest
 
+import io
 import sys
 
 class ParseQuery(object):
@@ -19,17 +21,22 @@ class ParseQuery(object):
 		self.mediaParsers = [self.countryGetFlagParser, \
 			self.countryCheckFlagParser]
 
-		self.parsers = self.dataParsers + self.mediaParsers
+		self.parsers = self.dataParsers + self.mediaParsers + [self.countryJsonParser]
 		
 	def parseQuery(self, query):
 		for parser in self.parsers:
 			result = parser(query)
 			if result != False:
-				return result
-
-		result = self.countryJsonParser(query)
-		if result != False:
-			return self.requestMaker(result)
+				if parser in self.dataParsers + [self.countryCheckFlagParser]:
+					print result
+					return True
+				elif parser is self.countryGetFlagParser:
+					image = Image.open(io.BytesIO(result))
+					image.show()
+					return True
+				else:
+					print self.requestMaker(result)
+					return True			
 		
 		if query == "exit":
 			sys.exit()
@@ -37,7 +44,7 @@ class ParseQuery(object):
 		raise ValueError("Wrong query!")
 
 	def parseHttpRequest(self, queryType, query):
-		for parser in self.parsers:
+		for parser in self.dataParsers + self.mediaParsers:
 			match = parser.match(query)
 			if match:
 				if queryType == "media" and parser in self.mediaParsers:
