@@ -10,7 +10,7 @@ class MakeRequest(object):
 		url = "http://" + jsonQuery["address"] + ":" + jsonQuery["port"]
 		payload = {"query": jsonQuery["content"], "type": jsonQuery["type"]}
 		headers = {"content-type": "application/json"}
-		req = requests.post(url, data=json.dumps(payload))
+		req = requests.post(url, data=json.dumps(payload), headers=headers)
 
 		req.raise_for_status()
 

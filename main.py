@@ -26,15 +26,26 @@ if __name__ == "__main__":
 	queryParser = ParseQuery(db)
 
 	if len(sys.argv) == 2 and sys.argv[1] == "sm":
-		print "Server mode!"
+		print "Server mode"
 		server = tornado.web.Application([(r"/", RequestHandler, {"queryParser": queryParser}), ])
 		server.listen(8888)
 		serverThread = Thread(target=tornado.ioloop.IOLoop.instance().start)
 		serverThread.daemon = True
 		serverThread.start()
+	else:
+		print "To run in server mode, start with 'sm' flag"
 
 	while True:
 		try:
 			queryParser.parseQuery(raw_input("--> ").lower().strip())
 		except UserWarning:
-			print "Example use:"
+			print "Example use: \
+			country(Poland) \
+			country(Poland); tag(marriage) \
+			country(Poland); getflag \
+			checkflag(http://foo.bar/flag.gif) \
+			data = { \
+				address: 127.0.0.1, \
+				port: 8888, \
+				type: media \
+				content: country(Poland); getflag}"
