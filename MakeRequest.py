@@ -14,5 +14,5 @@ class MakeRequest(object):
 
 		req.raise_for_status()
 
-		return json.loads(req.text)["response"]
+		return (json.loads(req.text)["response"], json.loads(req.text)["type"])
 		

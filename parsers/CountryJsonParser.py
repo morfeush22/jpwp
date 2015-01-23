@@ -5,21 +5,21 @@ import re
 
 class CountryJsonParser(Parser):
 	def __init__(self):
-		super(CountryJsonParser, self).__init__(r"^([0-9a-zA-Z_]*)\s*=\s*{([0-9a-zA-Z_.,:;\(\)\s]+)}$")
+		super(CountryJsonParser, self).__init__(r"^([0-9a-zA-Z_]*)\s*=\s*{([0-9a-zA-Z_.,:;\-\/\(\)\s]*)}$")
 		self.variablesList = {}
 
 	def __call__(self, query):
 		if self.wrapper(self.regex.match(query)):
-			return self.__parse(self.wrapper.match.group(1), self.wrapper.match.group(2))
+			return self.__parse(self.wrapper.match.group(1), self.wrapper.match.group(2), self.__getContent(query))
 		elif query in self.variablesList:
 			return self.variablesList[query]
 		else:
 			return False
 
-	def __parse(self, variable, query):
-		address = port = queryType = content = None
+	def __parse(self, variable, query, content):
+		address = port = queryType = None
 
-		iterator = iter(element.strip() for item in query.split(",") for element in item.strip().split(":"))
+		iterator = iter(element.strip() for item in query.split(",") for element in item.strip().split(":") if not re.search("content", item))
 		splitted = dict(zip(iterator, iterator))
 
 		for key, value in splitted.iteritems():
@@ -35,14 +35,19 @@ class CountryJsonParser(Parser):
 				if not re.match(r"^(?:data|media)$", value):
 					raise ValueError("Wrong type!")
 				queryType = value
-			elif key == "content":
-				content = value
 			else:
-				raise ValueError("Wrong query!")
+				raise UserWarning("Wrong query!")
 
 		if (address and port and queryType and content) is None:
-			raise ValueError("Incomplete query!")
+			raise UserWarning("Incomplete query!")
 
-		self.variablesList[variable] = splitted
+		self.variablesList[variable] = dict(splitted.items() + [("content", content)])
 			
 		return self.variablesList[variable]
+
+	def __getContent(self, query):
+		rawContent = re.search(r"content\s*:\s*([0-9a-zA-Z_.:;\-\/\(\)\s]*)", query)
+		if rawContent:
+			return rawContent.group(1).strip()
+
+		return None

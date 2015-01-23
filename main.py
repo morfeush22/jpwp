@@ -34,4 +34,7 @@ if __name__ == "__main__":
 		serverThread.start()
 
 	while True:
-		queryParser.parseQuery(raw_input("--> ").lower().strip())
+		try:
+			queryParser.parseQuery(raw_input("--> ").lower().strip())
+		except UserWarning:
+			print "Example use:"

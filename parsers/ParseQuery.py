@@ -24,35 +24,49 @@ class ParseQuery(object):
 		self.parsers = self.dataParsers + self.mediaParsers + [self.countryJsonParser]
 		
 	def parseQuery(self, query):
-		for parser in self.parsers:
-			result = parser(query)
-			if result != False:
-				if parser in self.dataParsers + [self.countryCheckFlagParser]:
-					print result
-					return True
-				elif parser is self.countryGetFlagParser:
-					image = Image.open(io.BytesIO(result))
-					image.show()
-					return True
-				else:
-					print self.requestMaker(result)
-					return True			
-		
 		if query == "exit":
 			sys.exit()
 
-		raise ValueError("Wrong query!")
+		for parser in self.parsers:
+			try:
+				result = parser(query)
+				if result != False:
+					if parser in self.dataParsers + [self.countryCheckFlagParser]:
+						print result
+						return True
+					elif parser is self.countryGetFlagParser:
+						image = Image.open(io.BytesIO(result))
+						image.show()
+						return True
+					else:
+						response = self.requestMaker(result)
+						if response[1] == "media":
+							# parse image				
+							return True
+						elif response[1] == "data":
+							print response[0]
+							return True
+
+			except ValueError as e:
+				print repr(e)
+			except UserWarning:
+				raise
+
+		raise UserWarning("Wrong query!")
 
 	def parseHttpRequest(self, queryType, query):
 		for parser in self.dataParsers + self.mediaParsers:
 			match = parser.match(query)
 			if match:
 				if queryType == "media" and parser in self.mediaParsers:
-					return {"response": "Media!"}
+					if parser is self.countryGetFlagParser:
+						return {"response": "Media!", "type": "media"}
+					else:
+						return {"response": parser(query), "type": "data"}
 				elif queryType == "data" and parser in self.dataParsers:
-					return {"response": parser(query)}
+					return {"response": parser(query), "type": "data"}
 				else:
-					return {"response": "Type mismatch!"}
+					return {"response": "Type mismatch!", "type": "data"}
 
-		return {"response": "Wrong query!"}
+		return {"response": "Wrong query!", "type": "data"}
 		
