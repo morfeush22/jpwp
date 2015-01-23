@@ -2,9 +2,9 @@
 from Parser import Parser
 
 class CountryTagParser(Parser):
-	def __init__(self, callback):
+	def __init__(self, countryParser):
 		super(CountryTagParser, self).__init__(r"^(country\([a-zA-Z\s]*\));\s*tag\(([0-9a-zA-Z_.,:\s]*)\)$")
-		self.callback = callback
+		self.countryParser = countryParser
 
 	def __call__(self, query):
 		if self.wrapper(self.regex.match(query)):
@@ -13,8 +13,12 @@ class CountryTagParser(Parser):
 			return False
 
 	def __parse(self, country, tag):
-		outputText = self.callback(country)
+		outputText = self.countryParser(country)
 		sentencesList = outputText.split(".")
 
-		return ". ".join([sentence for sentence in sentencesList if sentence.lower().find(tag) != -1]) + "."
+		result = ". ".join([sentence for sentence in sentencesList if sentence.lower().find(tag) != -1]) + "."
+		if result == ".":
+			return "Found nothing!"
+
+		return result
 		

@@ -10,9 +10,15 @@ class MakeRequest(object):
 		url = "http://" + jsonQuery["address"] + ":" + jsonQuery["port"]
 		payload = {"query": jsonQuery["content"], "type": jsonQuery["type"]}
 		headers = {"content-type": "application/json"}
-		req = requests.post(url, data=json.dumps(payload), headers=headers)
-
-		req.raise_for_status()
+		try:
+			req = requests.post(url, data=json.dumps(payload), headers=headers)
+		except requests.exceptions.ConnectionError:
+			raise Exception("{}:{} - not found!".format(jsonQuery["address"], jsonQuery["port"]))
+			
+		try:
+			req.raise_for_status()
+		except requests.exceptions.HTTPError:
+			raise Exception("{}:{} - file not found!".format(jsonQuery["address"], jsonQuery["port"]))
 
 		return (json.loads(req.text)["response"], json.loads(req.text)["type"])
 		

@@ -18,7 +18,11 @@ class RequestHandler(tornado.web.RequestHandler):
 
 	def post(self):
 		data = tornado.escape.json_decode(self.request.body)
-		self.write(queryParser.parseHttpRequest(data["type"], data["query"]))
+		try:
+			resp = queryParser.parseHttpRequest(data["type"], data["query"])
+			self.write(resp)
+		except Exception as e:
+			self.write({"response": "Bad request!", "type": "data"})
 
 if __name__ == "__main__":
 	client = MongoClient("mongodb://admin:admin@ds056727.mongolab.com:56727/countries")
@@ -37,7 +41,8 @@ if __name__ == "__main__":
 
 	while True:
 		try:
-			queryParser.parseQuery(raw_input("--> ").lower().strip())
+			inp = raw_input("--> ").lower().strip()
+			queryParser.parseQuery(inp)
 		except UserWarning:
 			print "Example use:\n" + \
 				"\ncountry(Poland)\n" + \
@@ -50,3 +55,5 @@ if __name__ == "__main__":
 					"\ttype: media,\n" + \
 					"\tcontent: country(Poland); getflag \n" + \
 					"\t} \n"
+		except Exception as e:
+			print str(e)

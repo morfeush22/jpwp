@@ -27,7 +27,10 @@ class CountryParser(Parser):
 			return contents.find({"name_id": getItem[0]["_id"]})[0]["content"]
 		else:
 			url = "http://en.wikipedia.org/wiki/" + country
-			rawHtml = urllib2.urlopen(url)
+			try:
+				rawHtml = urllib2.urlopen(url)
+			except urllib2.HTTPError:
+				raise Exception("{} - not found!".format(country))
 			soup = BeautifulSoup(rawHtml)
 
 			divId = {"id": re.compile("mw-content-text")}

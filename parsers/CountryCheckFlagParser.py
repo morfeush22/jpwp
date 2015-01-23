@@ -37,10 +37,16 @@ class CountryCheckFlagParser(Parser):
 		return "Not found!"
 
 	def __getImage(self, url):
-		req = requests.get(url, stream=True)
+		try:
+			req = requests.get(url, stream=True)
+		except requests.exceptions.ConnectionError:
+			raise Exception("{} - not found!".format(url))
 
-		req.raise_for_status()
-
+		try:	
+			req.raise_for_status()
+		except requests.exceptions.HTTPError:
+			raise Exception("{} - not found!".format(url))
+		
 		req.raw.decode_content = True
 
 		return Image.open(io.BytesIO(req.raw.read()))

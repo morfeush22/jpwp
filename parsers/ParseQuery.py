@@ -10,7 +10,7 @@ import sys
 class ParseQuery(object):
 	def __init__(self, db):
 		self.countryParser = CountryParser(db)
-		self.countryTagParser = CountryTagParser(self.parseQuery)
+		self.countryTagParser = CountryTagParser(self.countryParser)
 		self.countryJsonParser = CountryJsonParser()
 		self.countryGetFlagParser = CountryGetFlagParser()
 		self.countryCheckFlagParser = CountryCheckFlagParser()
