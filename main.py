@@ -39,13 +39,14 @@ if __name__ == "__main__":
 		try:
 			queryParser.parseQuery(raw_input("--> ").lower().strip())
 		except UserWarning:
-			print "Example use: \
-			country(Poland) \
-			country(Poland); tag(marriage) \
-			country(Poland); getflag \
-			checkflag(http://foo.bar/flag.gif) \
-			data = { \
-				address: 127.0.0.1, \
-				port: 8888, \
-				type: media \
-				content: country(Poland); getflag}"
+			print "Example use:\n" + \
+				"\ncountry(Poland)\n" + \
+				"country(Poland); tag(marriage)\n" + \
+				"country(Poland); getflag\n" + \
+				"checkflag(http://foo.bar/flag.gif)\n" + \
+				"data = {\n" + \
+					"\taddress: 127.0.0.1,\n" + \
+					"\tport: 8888,\n" + \
+					"\ttype: media,\n" + \
+					"\tcontent: country(Poland); getflag \n" + \
+					"\t} \n"
