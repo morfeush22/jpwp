@@ -69,7 +69,7 @@ class ParseQuery(object):
 					if parser is self.countryGetFlagParser:
 						result = parser(query)
 						if result != None:
-							return {"response": base64.b64encode(), "type": "media"}
+							return {"response": base64.b64encode(result), "type": "media"}
 						else:
 							return {"response": "Image not found!", "type": "data"}
 					else:

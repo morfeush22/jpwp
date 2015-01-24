@@ -24,6 +24,7 @@ class RequestHandler(tornado.web.RequestHandler):
 			self.write(resp)
 		except Exception as e:
 			self.write({"response": "Bad request!", "type": "data"})
+			print traceback.format_exc()
 
 if __name__ == "__main__":
 	client = MongoClient("mongodb://admin:admin@ds056727.mongolab.com:56727/countries")

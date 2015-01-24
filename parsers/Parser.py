@@ -4,11 +4,11 @@ import re
 class Parser(object):
 	def __init__(self, regex):
 		super(Parser, self).__init__()
-		self.regex = re.compile(regex)
+		self.regex = re.compile(regex, re.IGNORECASE)
 		self.wrapper = MatchWrapper()
 
 	def match(self, query):
-		if self.regex.match(query, re.IGNORECASE):
+		if self.regex.match(query):
 			return True
 		else:
 			return False
