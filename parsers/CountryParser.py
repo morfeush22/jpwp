@@ -8,7 +8,7 @@ import unicodedata
 
 class CountryParser(Parser):
 	def __init__(self, db):
-		super(CountryParser, self).__init__(r"^country\(([a-zA-Z\s]*)\)$")
+		super(CountryParser, self).__init__(r"^country\(([a-zA-Z'\s]*)\)$")
 		self.db = db
 
 	def __call__(self, query):

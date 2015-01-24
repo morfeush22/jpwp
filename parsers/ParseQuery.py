@@ -36,8 +36,9 @@ class ParseQuery(object):
 						print result
 						return True
 					elif parser is self.countryGetFlagParser:
-						image = Image.open(io.BytesIO(result))
-						image.show()
+						if result != None:
+							image = Image.open(io.BytesIO(result))
+							image.show()
 						return True
 					else:
 						response = self.requestMaker(result)
@@ -63,7 +64,11 @@ class ParseQuery(object):
 			if match:
 				if queryType == "media" and parser in self.mediaParsers:
 					if parser is self.countryGetFlagParser:
-						return {"response": base64.b64encode(parser(query)), "type": "media"}
+						result = parser(query)
+						if result != None:
+							return {"response": base64.b64encode(), "type": "media"}
+						else:
+							return {"response": "Image not found!", "type": "data"}
 					else:
 						return {"response": parser(query), "type": "data"}
 				elif queryType == "data" and parser in self.dataParsers:

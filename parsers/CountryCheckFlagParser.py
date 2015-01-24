@@ -4,17 +4,14 @@ from PIL import Image
 
 import io
 import math
-import operator
 import re
 import requests
 
 class CountryCheckFlagParser(Parser):
 	def __init__(self):
-		super(CountryCheckFlagParser, self).__init__(r"^checkflag\((http://[0-9a-zA-Z_.\-\/]*(?:gif))\)$")
-		with open("countries-names.txt") as handle:
-			self.countriesNames = handle.read().splitlines()
-
-		self.countriesNames.sort()
+		super(CountryCheckFlagParser, self).__init__(r"^checkflag\((http://[0-9a-zA-Z'_.\-\/]*(?:gif))\)$")
+		with open("country-flags-links.txt") as handle:
+			self.countriesLinks = handle.read().splitlines()
 
 	def __call__(self, query):
 		if self.wrapper(self.regex.match(query)):
@@ -26,13 +23,13 @@ class CountryCheckFlagParser(Parser):
 		refImage = self.__getImage(url)
 		refImageHist = refImage.histogram()
 
-		for countryName in self.countriesNames:
-			image = self.__getImage("http://www.mapsofworld.com/images/world-countries-flags/" + countryName + "-flag.gif")
+		for countryLink in self.countriesLinks:
+			image = self.__getImage(countryLink)
 			imageHist = image.histogram()
 
-			rms = math.sqrt(reduce(operator.add, map(lambda a, b: (a-b)**2, refImageHist, imageHist))/len(refImageHist))
+			rms = math.sqrt(sum((a-b)**2 for a, b in zip(refImageHist, imageHist))/len(refImageHist))
 			if rms <= 300:
-				return re.sub("-", " ", countryName).title()
+				return re.sub("-", " ", re.sub("_", " ", countryName)).title()
 
 		return "Not found!"
 

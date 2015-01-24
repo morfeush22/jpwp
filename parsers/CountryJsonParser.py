@@ -5,7 +5,7 @@ import re
 
 class CountryJsonParser(Parser):
 	def __init__(self):
-		super(CountryJsonParser, self).__init__(r"^([0-9a-zA-Z_]*)\s*=\s*{([0-9a-zA-Z_.,:;\-\/\(\)\s]*)}$")
+		super(CountryJsonParser, self).__init__(r"^([0-9a-zA-Z_]*)\s*=\s*{([0-9a-zA-Z'_.,:;\-\/\(\)\s]*)}$")
 		self.variablesList = {}
 
 	def __call__(self, query):

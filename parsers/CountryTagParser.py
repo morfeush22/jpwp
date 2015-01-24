@@ -3,7 +3,7 @@ from Parser import Parser
 
 class CountryTagParser(Parser):
 	def __init__(self, countryParser):
-		super(CountryTagParser, self).__init__(r"^(country\([a-zA-Z\s]*\));\s*tag\(([0-9a-zA-Z_.,:\s]*)\)$")
+		super(CountryTagParser, self).__init__(r"^(country\([a-zA-Z'\s]*\));\s*tag\(([0-9a-zA-Z'_.,:\s]*)\)$")
 		self.countryParser = countryParser
 
 	def __call__(self, query):

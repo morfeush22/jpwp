@@ -1,30 +1,40 @@
 # -*- coding: utf-8 -*-
 from Parser import Parser
 
+import re
 import requests
 
 class CountryGetFlagParser(Parser):
 	def __init__(self):
-		super(CountryGetFlagParser, self).__init__(r"^country\(([a-zA-Z\s]*)\);\s*getflag$")
+		super(CountryGetFlagParser, self).__init__(r"^country\(([a-zA-Z'\s]*)\);\s*getflag$")
+		with open("country-flags-links.txt") as handle:
+			self.countriesLinks = handle.read().splitlines()
 		
 	def __call__(self, query):
 		if self.wrapper(self.regex.match(query)):
-			return self.__parse(self.replaceTabs("-", self.wrapper.match.group(1).strip()))
+			return self.__parse(self.replaceTabs(" ", self.wrapper.match.group(1).strip()))
 		else:
 			return False
 
 	def __parse(self, country):
-		url = "http://www.mapsofworld.com/images/world-countries-flags/" + country + "-flag.gif"
-		try:
-			req = requests.get(url, stream=True)
-		except requests.exceptions.ConnectionError:
-			raise Exception("{} - not found!".format(country))
-		
-		try:
-			req.raise_for_status()
-		except requests.exceptions.HTTPError:
-			raise Exception("{} - not found!".format(country))
+		dashSub = ".*" + re.sub(" ", "-", country) + ".*"
+		underscoreSub = ".*" + re.sub(" ", "_", country) + ".*"
 
-		req.raw.decode_content = True
+		for countryLink in self.countriesLinks:
+			if re.match(dashSub, countryLink) or re.match(underscoreSub, countryLink):
+				try:
+					req = requests.get(countryLink, stream=True)
+				except requests.exceptions.ConnectionError:
+					raise Exception("{} - not found!".format(countryLink))
+				
+				try:
+					req.raise_for_status()
+				except requests.exceptions.HTTPError:
+					raise Exception("{} - not found!".format(countryLink))
 
-		return req.raw.read()
+				req.raw.decode_content = True
+
+				return req.raw.read()
+
+
+		return None
