@@ -21,7 +21,7 @@ class CountryGetFlagParser(Parser):
 		underscoreSub = ".*" + re.sub(" ", "_", country) + ".*"
 
 		for countryLink in self.countriesLinks:
-			if re.match(dashSub, countryLink) or re.match(underscoreSub, countryLink):
+			if re.match(dashSub, countryLink, re.IGNORECASE) or re.match(underscoreSub, countryLink, re.IGNORECASE):
 				try:
 					req = requests.get(countryLink, stream=True)
 				except requests.exceptions.ConnectionError:
