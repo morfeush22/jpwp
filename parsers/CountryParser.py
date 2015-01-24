@@ -31,6 +31,7 @@ class CountryParser(Parser):
 				rawHtml = urllib2.urlopen(url)
 			except urllib2.HTTPError:
 				raise Exception("{} - not found!".format(country))
+				
 			soup = BeautifulSoup(rawHtml)
 
 			divId = {"id": re.compile("mw-content-text")}

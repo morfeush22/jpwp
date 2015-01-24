@@ -8,7 +8,7 @@ class Parser(object):
 		self.wrapper = MatchWrapper()
 
 	def match(self, query):
-		if self.regex.match(query):
+		if self.regex.match(query, re.IGNORECASE):
 			return True
 		else:
 			return False

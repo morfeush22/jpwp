@@ -11,6 +11,7 @@ import sys
 import tornado.escape
 import tornado.ioloop
 import tornado.web
+import traceback
 
 class RequestHandler(tornado.web.RequestHandler):
 	def initialize(self, queryParser):
@@ -57,3 +58,4 @@ if __name__ == "__main__":
 					"\t} \n"
 		except Exception as e:
 			print str(e)
+			print traceback.format_exc()

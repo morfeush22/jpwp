@@ -6,6 +6,7 @@ from MakeRequest import MakeRequest
 import base64
 import io
 import sys
+import traceback
 
 class ParseQuery(object):
 	def __init__(self, db):
@@ -53,6 +54,8 @@ class ParseQuery(object):
 
 			except ValueError as e:
 				print repr(e)
+				print traceback.format_exc()
+				return
 			except UserWarning:
 				raise
 
