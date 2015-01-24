@@ -2,11 +2,11 @@
 from itertools import imap
 from Parser import Parser
 from PIL import Image
-from scipy.signal.signaltools import correlate2d as c2d
+# from scipy.signal.signaltools import correlate2d as c2d
 
 import io
 import math
-import numpy
+# import numpy
 import re
 import requests
 
@@ -48,7 +48,7 @@ class CountryCheckFlagParser(Parser):
 			imageHist = image.histogram()
 
 			rms = math.sqrt(sum((a-b)**2 for a, b in zip(refImageHist, imageHist))/len(refImageHist))
-			pearsonr = self.pearsonr(refImageHist, imageHist)
+			pearsonr = self.__pearsonr(refImageHist, imageHist)
 
 			if rms <= 6000 and pearsonr > 0.3:
 				return re.sub("-", " ", re.sub("_", " ",  re.match(r"^(.*)-(?:flag)?.*$", countryLink.rsplit("/", 1)[1]).group(1))).title()
@@ -70,7 +70,7 @@ class CountryCheckFlagParser(Parser):
 
 		return Image.open(io.BytesIO(req.raw.read()))
 		
-	def pearsonr(self, x, y):
+	def __pearsonr(self, x, y):
 		sumX = float(sum(x))
 		sumY = float(sum(y))
 
