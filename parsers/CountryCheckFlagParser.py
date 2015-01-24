@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from itertools import imap
 from Parser import Parser
 from PIL import Image
 from scipy.signal.signaltools import correlate2d as c2d
@@ -47,7 +48,9 @@ class CountryCheckFlagParser(Parser):
 			imageHist = image.histogram()
 
 			rms = math.sqrt(sum((a-b)**2 for a, b in zip(refImageHist, imageHist))/len(refImageHist))
-			if rms <= 1000:
+			pearsonr = self.pearsonr(refImageHist, imageHist)
+
+			if rms <= 6000 and pearsonr > 0.3:
 				return re.sub("-", " ", re.sub("_", " ",  re.match(r"^(.*)-(?:flag)?.*$", countryLink.rsplit("/", 1)[1]).group(1))).title()
 		
 		return "Not found!"
@@ -67,3 +70,17 @@ class CountryCheckFlagParser(Parser):
 
 		return Image.open(io.BytesIO(req.raw.read()))
 		
+	def pearsonr(self, x, y):
+		sumX = float(sum(x))
+		sumY = float(sum(y))
+
+		sumXSq = sum(map(lambda x: pow(x, 2), x))
+		sumYSq = sum(map(lambda x: pow(x, 2), y))
+
+		pSum = sum(imap(lambda x, y: x*y, x, y))
+		num = pSum-(sumX*sumY/len(x))
+		den = pow((sumXSq-pow(sumX, 2)/len(x))*(sumYSq-pow(sumY, 2)/len(y)), 0.5)
+		if den == 0: 
+			return 0
+
+		return num/den
