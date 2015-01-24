@@ -30,7 +30,7 @@ class CountryParser(Parser):
 			try:
 				rawHtml = urllib2.urlopen(url)
 			except urllib2.HTTPError:
-				raise Exception("{} - not found!".format(country))
+				raise Exception("{} - url not found!".format(country))
 				
 			soup = BeautifulSoup(rawHtml)
 

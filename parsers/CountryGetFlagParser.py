@@ -25,12 +25,12 @@ class CountryGetFlagParser(Parser):
 				try:
 					req = requests.get(countryLink, stream=True)
 				except requests.exceptions.ConnectionError:
-					raise Exception("{} - not found!".format(countryLink))
+					raise Exception("{} - connection problem!".format(countryLink))
 				
 				try:
 					req.raise_for_status()
 				except requests.exceptions.HTTPError:
-					raise Exception("{} - not found!".format(countryLink))
+					raise Exception("{} - url not found!".format(countryLink))
 
 				req.raw.decode_content = True
 
